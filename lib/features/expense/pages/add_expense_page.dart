@@ -1,9 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:poysha/features/expense/model/expense.dart';
+import 'package:poysha/features/expense/widgets/custom_snackbar.dart';
 import 'package:poysha/features/expense/widgets/custom_text_field.dart';
 import 'package:poysha/features/expense/widgets/retro_date_picker.dart';
 import 'package:poysha/features/expense/widgets/title_text.dart';
+import 'package:uuid/uuid.dart';
 
+import '../providers/expense_provider.dart';
 import '../widgets/date_controller_text_field.dart';
 
 class AddExpensePage extends StatefulWidget {
@@ -18,11 +23,15 @@ class _AddExpensePageState extends State<AddExpensePage> {
   final TextEditingController dateController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController categoryController = TextEditingController();
+
+  final DateTime selectedDate = DateTime.now();
+  String selectedCategory = "Others";
+
   var isDateSelecting = false;
   var isMinimized = false;
+  bool isAdding = true;
 
   bool income = true;
-  String selectedCategory = 'Food';
 
   void toggleSelectingDate() {
     FocusScope.of(context).unfocus();
@@ -48,6 +57,48 @@ class _AddExpensePageState extends State<AddExpensePage> {
     'Savings / Investment',
     'Others',
   ];
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    amountController.dispose();
+    dateController.dispose();
+    categoryController.dispose();
+    super.dispose();
+  }
+
+  void saveExpense({required WidgetRef ref}) {
+    final title = titleController.text.trim();
+    final amount = double.tryParse(amountController.text);
+    final selectedDate = this.selectedDate;
+    if (title.isEmpty) {
+      customSnackBar(context: context, message: 'Please enter a title');
+      return;
+    } else if (amount == null || amount <= 0) {
+      customSnackBar(context: context, message: 'Please enter a valid amount');
+      return;
+    }
+    setState(() {
+      isAdding = true;
+    });
+    ref
+        .read(expenseProvider.notifier)
+        .addExpense(
+          Expense(
+            id: Uuid().v4(),
+            title: title,
+            amount: amount ?? 0,
+            date: selectedDate,
+            category: selectedCategory,
+          ),
+        );
+    if (mounted) {
+      setState(() {
+        isAdding = false;
+      });
+      Navigator.of(context).pop();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +140,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                               blurRadius: 0,
                             ),
                           ],
-                          color: theme.colorScheme.surfaceContainerHighest,
+                          color: theme.colorScheme.surface,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: CustomTextField(
@@ -111,7 +162,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                               blurRadius: 0,
                             ),
                           ],
-                          color: theme.colorScheme.surfaceContainerHighest,
+                          color: theme.colorScheme.surface,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: DateControllerTextField(
@@ -137,7 +188,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                               blurRadius: 0,
                             ),
                           ],
-                          color: theme.colorScheme.surfaceContainerHighest,
+                          color: theme.colorScheme.surface,
                         ),
                         child: DropdownButton(
                           elevation: 0,
@@ -176,7 +227,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                               blurRadius: 0,
                             ),
                           ],
-                          color: theme.colorScheme.surfaceContainerHighest,
+                          color: theme.colorScheme.surface,
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: CustomTextField(
@@ -189,33 +240,39 @@ class _AddExpensePageState extends State<AddExpensePage> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          boxShadow: [
-                            BoxShadow(
-                              color: theme.colorScheme.onSurface,
-                              offset: const Offset(2, 2),
-                              blurRadius: 0,
+                      Consumer(
+                        builder: (context, ref, child) {
+                          return Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
                             ),
-                          ],
-                          color: theme.colorScheme.surfaceContainerHighest,
-                        ),
-                        width: double.infinity,
-                        child: CupertinoButton(
-                          padding: EdgeInsets.zero,
-                          onPressed: () {},
-                          child: Text(
-                            'Save Expense',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: theme.colorScheme.onSurface,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: theme.colorScheme.onSurface,
+                                  offset: const Offset(2, 2),
+                                  blurRadius: 0,
+                                ),
+                              ],
+                              color: theme.colorScheme.surface,
                             ),
-                          ),
-                        ),
+                            width: double.infinity,
+                            child: CupertinoButton(
+                              padding: EdgeInsets.zero,
+                              onPressed: () {
+                                saveExpense(ref: ref);
+                              },
+                              child: Text(
+                                'Save Expense',
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                       SizedBox(height: 10),
                     ],
@@ -228,6 +285,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                 child: RetroDatePickerDialog(
                   controller: dateController,
                   onClosing: toggleSelectingDate,
+                  pickedDate: selectedDate,
                 ),
               ),
           ],

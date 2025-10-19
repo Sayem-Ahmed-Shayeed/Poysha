@@ -1,12 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:poysha/features/expense/pages/add_expense_page.dart';
+import 'package:poysha/features/expense/pages/edit_expense_page.dart';
+import 'package:poysha/features/expense/providers/expense_provider.dart';
+import 'package:poysha/features/expense/widgets/expense_card.dart';
 import 'package:poysha/features/settings/settings_page.dart';
 import 'package:poysha/features/theme/providers/theme_mode_provider.dart';
 
-class HomePage extends StatelessWidget {
+import '../helpers/dismissble_widget_helper.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   void navigateWithAnimation({
     required Widget child,
     required BuildContext ctx,
@@ -29,6 +39,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Scaffold(
       floatingActionButton: GestureDetector(
         onTap: () {
@@ -37,13 +48,21 @@ class HomePage extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
+            borderRadius: BorderRadius.circular(4),
             color: theme.colorScheme.secondary,
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(2, 2),
+                blurRadius: 0,
+                color: theme.colorScheme.onSurface,
+              ),
+            ],
           ),
           child: Text(
             "Add Expense",
             style: theme.textTheme.titleSmall?.copyWith(
               color: theme.colorScheme.onSecondary,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -77,22 +96,98 @@ class HomePage extends StatelessWidget {
         title: const Text('Expense Tracker'),
       ),
       body: Center(
-        child: Consumer(
-          builder: (context, ref, child) => Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Welcome to Expense Tracker!',
-                  style: theme.textTheme.headlineSmall,
-                ),
-                Text(
-                  'Track your expenses and manage your budget effectively.',
-                  style: theme.textTheme.bodyLarge,
-                ),
-              ],
-            ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Consumer(
+                builder: (context, ref, child) {
+                  final expenses = ref.watch(expenseProvider);
+
+                  if (expenses.isEmpty) {
+                    return Expanded(
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.receipt_long,
+                              size: 100,
+                              color: theme.colorScheme.outline,
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              "No expenses yet",
+                              style: theme.textTheme.titleLarge?.copyWith(
+                                color: theme.colorScheme.onSurface,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              "Tap 'Add Expense' to get started",
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: theme.colorScheme.outline,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: expenses.length,
+                      itemBuilder: (context, index) {
+                        final expense = expenses[index];
+                        final String date =
+                            "${expense.date.day}/${expense.date.month}/${expense.date.year}";
+                        final title = expense.title;
+                        final category = expense.category;
+                        final amount = expense.amount.toStringAsFixed(2);
+
+                        final colorIndex = index % 8;
+                        return Dismissible(
+                          key: Key(expense.id),
+                          direction: DismissDirection.horizontal,
+                          confirmDismiss: (direction) async {
+                            return await confirmDismiss(
+                              expense: expense,
+                              ref: ref,
+                              context: context,
+                            );
+                          },
+                          background: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            child: Image(
+                              fit: BoxFit.cover,
+                              image: AssetImage('assets/images/background.gif'),
+                            ),
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              navigateWithAnimation(
+                                child: EditExpensePage(expense: expense),
+                                ctx: context,
+                              );
+                            },
+                            child: ExpenseCard(
+                              category: category,
+                              title: title,
+                              date: date,
+                              amount: amount,
+                              colorIndex: colorIndex,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ),

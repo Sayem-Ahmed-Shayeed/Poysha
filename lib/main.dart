@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:poysha/features/expense/model/expense.dart';
 import 'package:poysha/features/theme/providers/theme_mode_provider.dart';
 
 import 'features/expense/pages/home_page.dart';
-import 'features/theme/curr_color_scheme_persistency.dart';
+import 'features/theme/color_scheme.dart';
 import 'features/theme/providers/color_scheme_provider.dart';
 
 Future<void> main() async {
@@ -15,8 +16,10 @@ Future<void> main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(CurrColorSchemeAdapter());
+  Hive.registerAdapter(ExpenseAdapter());
   await Hive.openBox<String>('colorSchemeBox');
   await Hive.openBox<bool>('themeModeBox');
+  await Hive.openBox('expenseBox');
 
   runApp(const ProviderScope(child: MyApp()));
 }

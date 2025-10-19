@@ -4,11 +4,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class RetroDatePickerDialog extends StatefulWidget {
   final TextEditingController controller;
   final VoidCallback onClosing;
+  DateTime pickedDate = DateTime.now();
 
-  const RetroDatePickerDialog({
+  RetroDatePickerDialog({
     super.key,
     required this.controller,
     required this.onClosing,
+    required this.pickedDate,
   });
 
   @override
@@ -29,8 +31,8 @@ class _RetroDatePickerDialogState extends State<RetroDatePickerDialog> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: inDarkMode
-              ? theme.colorScheme.onTertiaryFixed
-              : theme.colorScheme.tertiaryFixed,
+              ? theme.colorScheme.secondaryFixedDim
+              : theme.colorScheme.tertiaryContainer,
           border: Border.all(color: theme.colorScheme.onSurface, width: 1),
         ),
         child: Column(
@@ -40,14 +42,6 @@ class _RetroDatePickerDialogState extends State<RetroDatePickerDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _RetroButton(
-                  text: '–',
-                  color: Colors.green,
-                  onPressed: () {
-                    widget.onClosing();
-                  },
-                ),
-                const SizedBox(width: 10),
                 _RetroButton(
                   text: 'X',
                   color: Colors.red,
@@ -91,6 +85,7 @@ class _RetroDatePickerDialogState extends State<RetroDatePickerDialog> {
                   onPressed: () {
                     widget.controller.text =
                         "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
+                    widget.pickedDate = selectedDate;
                     widget.onClosing();
                   },
                 ),
