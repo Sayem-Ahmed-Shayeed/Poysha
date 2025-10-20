@@ -14,6 +14,8 @@ class Expense extends HiveObject {
   final DateTime date;
   @HiveField(4)
   final String category;
+  @HiveField(5)
+  bool isIncome;
 
   Expense({
     required this.id,
@@ -21,5 +23,6 @@ class Expense extends HiveObject {
     required this.amount,
     required this.date,
     required this.category,
+    required this.isIncome,
   });
 }

@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:poysha/features/expense/pages/add_expense_page.dart';
-import 'package:poysha/features/expense/pages/edit_expense_page.dart';
+import 'package:poysha/features/expense/pages/expense_pages/edit_expense_page.dart';
+import 'package:poysha/features/expense/pages/income_pages/edit_income_page.dart';
 import 'package:poysha/features/expense/providers/expense_provider.dart';
 import 'package:poysha/features/expense/widgets/expense_card.dart';
-import 'package:poysha/features/settings/settings_page.dart';
 import 'package:poysha/features/theme/providers/theme_mode_provider.dart';
 
 import '../helpers/dismissble_widget_helper.dart';
+import 'expense_gate.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class ExpensePage extends StatefulWidget {
+  const ExpensePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<ExpensePage> createState() => _ExpensePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ExpensePageState extends State<ExpensePage> {
   void navigateWithAnimation({
     required Widget child,
     required BuildContext ctx,
@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
           const begin = Offset(0.0, 1.0);
           const end = Offset.zero;
           final tween = Tween(begin: begin, end: end);
-          final offsetAnimation = animation.drive(tween);
+          final _ = animation.drive(tween);
           return ScaleTransition(scale: animation, child: child);
         },
       ),
@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       floatingActionButton: GestureDetector(
         onTap: () {
-          navigateWithAnimation(child: AddExpensePage(), ctx: context);
+          navigateWithAnimation(child: ExpenseGate(), ctx: context);
         },
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
           child: Text(
-            "Add Expense",
+            "Add Expense/Income",
             style: theme.textTheme.titleSmall?.copyWith(
               color: theme.colorScheme.onSecondary,
               fontWeight: FontWeight.bold,
@@ -84,16 +84,8 @@ class _HomePageState extends State<HomePage> {
               );
             },
           ),
-          IconButton(
-            icon: Icon(Icons.settings, color: theme.colorScheme.primary),
-            onPressed: () {
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (context) => SettingsPage()));
-            },
-          ),
         ],
-        title: const Text('Expense Tracker'),
+        title: const Text('Expense'),
       ),
       body: Center(
         child: Padding(
@@ -147,6 +139,7 @@ class _HomePageState extends State<HomePage> {
                         final title = expense.title;
                         final category = expense.category;
                         final amount = expense.amount.toStringAsFixed(2);
+                        bool isIncome = expense.isIncome;
 
                         final colorIndex = index % 8;
                         return Dismissible(
@@ -161,15 +154,22 @@ class _HomePageState extends State<HomePage> {
                           },
                           background: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 20),
-                            child: Image(
-                              fit: BoxFit.cover,
-                              image: AssetImage('assets/images/background.gif'),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(5),
+                              child: Image(
+                                fit: BoxFit.cover,
+                                image: AssetImage(
+                                  'assets/images/background.gif',
+                                ),
+                              ),
                             ),
                           ),
                           child: GestureDetector(
                             onTap: () {
                               navigateWithAnimation(
-                                child: EditExpensePage(expense: expense),
+                                child: isIncome
+                                    ? EditIncomePage(expense: expense)
+                                    : EditExpensePage(expense: expense),
                                 ctx: context,
                               );
                             },
@@ -179,6 +179,7 @@ class _HomePageState extends State<HomePage> {
                               date: date,
                               amount: amount,
                               colorIndex: colorIndex,
+                              isIncome: isIncome,
                             ),
                           ),
                         );

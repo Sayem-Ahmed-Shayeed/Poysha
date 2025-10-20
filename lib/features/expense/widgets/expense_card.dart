@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ExpenseCard extends StatelessWidget {
   const ExpenseCard({
@@ -8,6 +9,7 @@ class ExpenseCard extends StatelessWidget {
     required this.date,
     required this.amount,
     required this.colorIndex,
+    required this.isIncome,
   });
 
   final String category;
@@ -15,6 +17,7 @@ class ExpenseCard extends StatelessWidget {
   final String date;
   final String amount;
   final int colorIndex;
+  final bool isIncome;
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +73,10 @@ class ExpenseCard extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: theme.colorScheme.surface,
               ),
-              child: Icon(
-                Icons.remove,
-                color: theme.colorScheme.onSurface,
-                size: 20,
+              child: Image.asset(
+                height: 60.h,
+                width: 60.w,
+                'assets/icon/${isIncome ? 'income' : 'expense'}.png',
               ),
             ),
             title: Text(
@@ -90,7 +93,7 @@ class ExpenseCard extends StatelessWidget {
               ),
             ),
             trailing: Text(
-              amount,
+              (isIncome ? '+' : '-') + amount,
               style: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.surface,
                 fontWeight: FontWeight.bold,

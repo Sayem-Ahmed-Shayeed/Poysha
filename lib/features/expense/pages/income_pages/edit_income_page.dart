@@ -7,26 +7,26 @@ import 'package:poysha/features/expense/widgets/custom_text_field.dart';
 import 'package:poysha/features/expense/widgets/retro_date_picker.dart';
 import 'package:poysha/features/expense/widgets/title_text.dart';
 
-import '../providers/expense_provider.dart';
-import '../widgets/date_controller_text_field.dart';
+import '../../providers/expense_provider.dart';
+import '../../widgets/date_controller_text_field.dart';
 
-class EditExpensePage extends StatefulWidget {
-  const EditExpensePage({super.key, required this.expense});
+class EditIncomePage extends StatefulWidget {
+  const EditIncomePage({super.key, required this.expense});
 
   final Expense expense;
 
   @override
-  State<EditExpensePage> createState() => _EditExpensePageState();
+  State<EditIncomePage> createState() => _EditIncomePageState();
 }
 
-class _EditExpensePageState extends State<EditExpensePage> {
+class _EditIncomePageState extends State<EditIncomePage> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController categoryController = TextEditingController();
 
   final DateTime selectedDate = DateTime.now();
-  String selectedCategory = "Others";
+  String selectedCategory = "Salary";
 
   var isDateSelecting = false;
   var isMinimized = false;
@@ -41,21 +41,26 @@ class _EditExpensePageState extends State<EditExpensePage> {
     });
   }
 
-  List<String> expenseCategories = [
-    'Food',
-    'Groceries',
-    'Transport',
-    'Entertainment',
-    'Bills',
-    'Shopping / Clothing',
-    'Health / Medical',
-    'Education / Learning',
-    'Travel / Vacation',
-    'Subscriptions',
-    'Gifts / Charity',
-    'Home / Maintenance',
-    'Insurance',
-    'Savings / Investment',
+  List<String> incomeCategories = [
+    'Salary',
+    'Freelance / Contract',
+    'Business',
+    'Bonus',
+    'Commission',
+    'Investment Returns',
+    'Rental Income',
+    'Side Hustle / Gig',
+    'Dividends',
+    'Interest',
+    'Gifts Received',
+    'Refunds / Reimbursements',
+    'Sales / Selling Items',
+    'Pension',
+    'Government Benefits',
+    'Cashback / Rewards',
+    'Royalties',
+    'Grants / Scholarships',
+    'Tax Refund',
     'Others',
   ];
 
@@ -106,6 +111,7 @@ class _EditExpensePageState extends State<EditExpensePage> {
             amount: amount,
             date: selectedDate,
             category: selectedCategory,
+            isIncome: true,
           ),
         );
     if (mounted) {
@@ -136,31 +142,6 @@ class _EditExpensePageState extends State<EditExpensePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Container(
-              //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              //   decoration: BoxDecoration(
-              //     shape: BoxShape.rectangle,
-              //     color: theme.colorScheme.primary.withValues(alpha: .5),
-              //   ),
-              //   child: Column(
-              //     children: [
-              //       Text(
-              //         "Something wrong with your expense?",
-              //         style: theme.textTheme.titleLarge?.copyWith(
-              //           color: theme.colorScheme.onPrimary,
-              //           fontWeight: FontWeight.bold,
-              //           fontSize: 40.w,
-              //         ),
-              //       ),
-              //       Text(
-              //         "No problem. Edit your expense here.",
-              //         style: theme.textTheme.titleMedium?.copyWith(
-              //           color: theme.colorScheme.onPrimary,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               SizedBox(height: 50),
               Container(
                 margin: EdgeInsets.symmetric(horizontal: 16),
@@ -189,7 +170,7 @@ class _EditExpensePageState extends State<EditExpensePage> {
                         controller: titleController,
                         validator: null,
                         label: "Title",
-                        hintText: "e.g. Grocery",
+                        hintText: "e.g. Salary",
                         isObscure: null,
                         toggle: null,
                       ),
@@ -243,7 +224,7 @@ class _EditExpensePageState extends State<EditExpensePage> {
                           color: theme.colorScheme.onSurface,
                         ),
                         items: [
-                          for (var category in expenseCategories)
+                          for (var category in incomeCategories)
                             DropdownMenuItem(
                               value: category,
                               child: Text(category),
@@ -257,7 +238,7 @@ class _EditExpensePageState extends State<EditExpensePage> {
                       ),
                     ),
                     SizedBox(height: 10),
-                    TitleText(title: "Amount"),
+                    TitleText(title: "Income Amount"),
                     SizedBox(height: 10),
                     Container(
                       width: double.infinity,
@@ -307,7 +288,7 @@ class _EditExpensePageState extends State<EditExpensePage> {
                               updateExpense(ref: ref);
                             },
                             child: Text(
-                              'Save Expense',
+                              'Update Income',
                               style: theme.textTheme.titleMedium?.copyWith(
                                 color: theme.colorScheme.onSurface,
                               ),

@@ -8,30 +8,29 @@ import 'package:poysha/features/expense/widgets/retro_date_picker.dart';
 import 'package:poysha/features/expense/widgets/title_text.dart';
 import 'package:uuid/uuid.dart';
 
-import '../providers/expense_provider.dart';
-import '../widgets/date_controller_text_field.dart';
+import '../../providers/expense_provider.dart';
+import '../../widgets/date_controller_text_field.dart';
 
-class AddExpensePage extends StatefulWidget {
-  const AddExpensePage({super.key});
+class AddIncomePage extends StatefulWidget {
+  const AddIncomePage({super.key});
 
   @override
-  State<AddExpensePage> createState() => _AddExpensePageState();
+  State<AddIncomePage> createState() => _AddIncomePageState();
 }
 
-class _AddExpensePageState extends State<AddExpensePage> {
+class _AddIncomePageState extends State<AddIncomePage>
+    with SingleTickerProviderStateMixin {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController categoryController = TextEditingController();
 
   final DateTime selectedDate = DateTime.now();
-  String selectedCategory = "Others";
+  String selectedCategory = "Salary";
 
   var isDateSelecting = false;
   var isMinimized = false;
   bool isAdding = true;
-
-  bool income = true;
 
   void toggleSelectingDate() {
     FocusScope.of(context).unfocus();
@@ -40,21 +39,26 @@ class _AddExpensePageState extends State<AddExpensePage> {
     });
   }
 
-  List<String> expenseCategories = [
-    'Food',
-    'Groceries',
-    'Transport',
-    'Entertainment',
-    'Bills',
-    'Shopping / Clothing',
-    'Health / Medical',
-    'Education / Learning',
-    'Travel / Vacation',
-    'Subscriptions',
-    'Gifts / Charity',
-    'Home / Maintenance',
-    'Insurance',
-    'Savings / Investment',
+  List<String> incomeCategories = [
+    'Salary',
+    'Freelance / Contract',
+    'Business',
+    'Bonus',
+    'Commission',
+    'Investment Returns',
+    'Rental Income',
+    'Side Hustle / Gig',
+    'Dividends',
+    'Interest',
+    'Gifts Received',
+    'Refunds / Reimbursements',
+    'Sales / Selling Items',
+    'Pension',
+    'Government Benefits',
+    'Cashback / Rewards',
+    'Royalties',
+    'Grants / Scholarships',
+    'Tax Refund',
     'Others',
   ];
 
@@ -87,9 +91,10 @@ class _AddExpensePageState extends State<AddExpensePage> {
           Expense(
             id: Uuid().v4(),
             title: title,
-            amount: amount ?? 0,
+            amount: amount,
             date: selectedDate,
             category: selectedCategory,
+            isIncome: true,
           ),
         );
     if (mounted) {
@@ -100,6 +105,11 @@ class _AddExpensePageState extends State<AddExpensePage> {
     }
   }
 
+  List<List<dynamic>> tabs = [
+    ['Expense', Icons.arrow_downward],
+    ['Income', Icons.arrow_upward],
+  ];
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -109,7 +119,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
-        title: Text('Add Expense'),
+        title: Text('Add Income'),
       ),
       body: Center(
         child: Stack(
@@ -147,7 +157,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                           controller: titleController,
                           validator: null,
                           label: "Title",
-                          hintText: "e.g. Grocery",
+                          hintText: "e.g. Salary",
                           isObscure: null,
                           toggle: null,
                         ),
@@ -201,7 +211,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                             color: theme.colorScheme.onSurface,
                           ),
                           items: [
-                            for (var category in expenseCategories)
+                            for (var category in incomeCategories)
                               DropdownMenuItem(
                                 value: category,
                                 child: Text(category),
@@ -215,7 +225,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                         ),
                       ),
                       SizedBox(height: 10),
-                      TitleText(title: "Amount"),
+                      TitleText(title: "Income Amount"),
                       SizedBox(height: 10),
                       Container(
                         width: double.infinity,
@@ -265,7 +275,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                                 saveExpense(ref: ref);
                               },
                               child: Text(
-                                'Save Expense',
+                                'Save Income',
                                 style: theme.textTheme.titleMedium?.copyWith(
                                   color: theme.colorScheme.onSurface,
                                 ),

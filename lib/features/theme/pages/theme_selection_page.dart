@@ -58,7 +58,6 @@ class ThemeSelectionPage extends StatelessWidget {
                   .setColorScheme(scheme.name);
 
               Navigator.of(context).pop();
-              Navigator.of(context).pop();
             },
             child: Container(
               padding: EdgeInsets.all(10.w),

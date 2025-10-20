@@ -16,7 +16,9 @@ class CurrColorSchemeAdapter extends TypeAdapter<CurrColorScheme> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return CurrColorScheme(schemeName: fields[0] as String);
+    return CurrColorScheme(
+      schemeName: fields[0] as String,
+    );
   }
 
   @override

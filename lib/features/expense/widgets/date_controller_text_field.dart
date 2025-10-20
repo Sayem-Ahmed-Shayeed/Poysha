@@ -27,7 +27,6 @@ class DateControllerTextField extends StatelessWidget {
         filled: true,
         suffix: GestureDetector(
           onTap: () => onSelectingDate(),
-          
           child: const Icon(Icons.calendar_month_outlined, size: 18),
         ),
         enabled: true,

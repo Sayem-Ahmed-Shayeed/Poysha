@@ -5,9 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:poysha/features/expense/model/expense.dart';
+import 'package:poysha/features/home/pages/home_page.dart';
 import 'package:poysha/features/theme/providers/theme_mode_provider.dart';
 
-import 'features/expense/pages/home_page.dart';
 import 'features/theme/color_scheme.dart';
 import 'features/theme/providers/color_scheme_provider.dart';
 
@@ -62,7 +62,7 @@ class MyApp extends ConsumerWidget {
           home: child,
         );
       },
-      child: const HomePage(),
+      child: HomePage(),
     );
   }
 }
