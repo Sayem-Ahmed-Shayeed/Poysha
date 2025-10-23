@@ -10,6 +10,7 @@ import 'package:poysha/features/summary/widgets/category_breakdown_widget.dart';
 import 'package:poysha/features/summary/widgets/summary_card.dart';
 import 'package:poysha/features/summary/widgets/title_text.dart';
 
+import '../../theme/providers/theme_mode_provider.dart';
 import '../widgets/empty_state.dart';
 
 class SummaryPage extends ConsumerStatefulWidget {
@@ -52,6 +53,22 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          actions: [
+            Consumer(
+              builder: (context, ref, child) {
+                final inDarkMode = ref.watch(themeNotifierProvider);
+                return IconButton(
+                  icon: Icon(
+                    inDarkMode ? Icons.sunny : Icons.dark_mode,
+                    color: theme.colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    ref.read(themeNotifierProvider.notifier).toggleThemeMode();
+                  },
+                );
+              },
+            ),
+          ],
           scrolledUnderElevation: 0,
           centerTitle: true,
           title: const Text("Summary"),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poysha/features/expense/widgets/custom_snackbar.dart';
+
+import '../../expense/providers/expense_provider.dart';
 
 class ClearDataPage extends StatelessWidget {
   const ClearDataPage({super.key});
@@ -30,7 +34,7 @@ class ClearDataPage extends StatelessWidget {
             children: [
               Text(
                 textAlign: TextAlign.center,
-                "Do you want to delete \nnall the history?",
+                "Do you want to delete \nall the history?",
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   fontSize: 40.sp,
@@ -40,51 +44,73 @@ class ClearDataPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 40.w,
-                      vertical: 2.h,
-                    ),
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: const Offset(2, 2),
-                          blurRadius: 0,
-                        ),
-                      ],
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      "No",
-                      style: TextStyle(color: Colors.white, fontSize: 40.sp),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 40.w,
+                        vertical: 2.h,
+                      ),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black,
+                            offset: const Offset(2, 2),
+                            blurRadius: 0,
+                          ),
+                        ],
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        "No",
+                        style: TextStyle(color: Colors.white, fontSize: 40.sp),
+                      ),
                     ),
                   ),
                   SizedBox(width: 50.w),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 40.w,
-                      vertical: 2.h,
-                    ),
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black,
-                          offset: const Offset(2, 2),
-                          blurRadius: 0,
+                  Consumer(
+                    builder: (context, ref, child) {
+                      return GestureDetector(
+                        onTap: () async {
+                          ref.read(expenseProvider.notifier).clearExpenses();
+                          if (context.mounted) {
+                            customSnackBar(
+                              context: context,
+                              message: 'Data Cleared',
+                            );
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 40.w,
+                            vertical: 2.h,
+                          ),
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black,
+                                offset: const Offset(2, 2),
+                                blurRadius: 0,
+                              ),
+                            ],
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            "Yes",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 40.sp,
+                            ),
+                          ),
                         ),
-                      ],
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Text(
-                      "Yes",
-                      style: TextStyle(color: Colors.white, fontSize: 40.sp),
-                    ),
+                      );
+                    },
                   ),
-
-                  SizedBox(width: 5.w),
                 ],
               ),
             ],
