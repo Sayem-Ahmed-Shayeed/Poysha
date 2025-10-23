@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poysha/features/expense/providers/expense_provider.dart';
@@ -65,6 +66,14 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
                   onPressed: () {
                     ref.read(themeNotifierProvider.notifier).toggleThemeMode();
                   },
+                ).animate(
+                  effects: [
+                    ScaleEffect(
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                      delay: Duration.zero,
+                    ),
+                  ],
                 );
               },
             ),
@@ -99,6 +108,19 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
                           _buildTimeFrameWidget(theme: theme),
                           SizedBox(width: 15.w),
                           _buildSortedWidget(theme: theme),
+                        ],
+                      ).animate(
+                        effects: [
+                          FadeEffect(
+                            duration: Duration(milliseconds: 500),
+                            curve: Curves.easeInOut,
+                          ),
+                          SlideEffect(
+                            begin: const Offset(0, -0.5),
+                            end: Offset.zero,
+                            curve: Curves.easeInOut,
+                            duration: Duration(milliseconds: 500),
+                          ),
                         ],
                       ),
                       SizedBox(height: 10.h),
@@ -146,17 +168,58 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  TitleText(title: key),
+                                  TitleText(title: key).animate(
+                                    effects: [
+                                      FadeEffect(
+                                        duration: Duration(milliseconds: 500),
+                                        curve: Curves.easeInOut,
+                                      ),
+                                      SlideEffect(
+                                        begin: const Offset(0, -0.3),
+                                        end: Offset.zero,
+                                        curve: Curves.easeInOut,
+                                        duration: Duration(milliseconds: 500),
+                                      ),
+                                    ],
+                                  ),
                                   SizedBox(height: 5.h),
 
                                   SummaryCard(
                                     totalIncome: totalIncome,
                                     totalExpense: totalExpense,
                                     remaining: remaining,
+                                  ).animate(
+                                    effects: [
+                                      FadeEffect(
+                                        duration: Duration(milliseconds: 500),
+                                        curve: Curves.easeInOut,
+                                      ),
+                                      SlideEffect(
+                                        begin: const Offset(0, 0.3),
+                                        end: Offset.zero,
+                                        curve: Curves.easeInOut,
+                                        duration: Duration(milliseconds: 500),
+                                      ),
+                                    ],
                                   ),
                                   SizedBox(height: 10.h),
                                   if (categoryBreakdown.isNotEmpty) ...[
-                                    TitleText(title: "Category Breakdown"),
+                                    TitleText(
+                                      title: "Category Breakdown",
+                                    ).animate(
+                                      effects: [
+                                        FadeEffect(
+                                          duration: Duration(milliseconds: 500),
+                                          curve: Curves.easeInOut,
+                                        ),
+                                        SlideEffect(
+                                          begin: const Offset(0, -0.3),
+                                          end: Offset.zero,
+                                          curve: Curves.easeInOut,
+                                          duration: Duration(milliseconds: 500),
+                                        ),
+                                      ],
+                                    ),
 
                                     Divider(
                                       color: theme.colorScheme.onSurface
@@ -167,6 +230,19 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
                                     ),
                                     CategoryBreakdownWidget(
                                       categoryPercentages: categoryBreakdown,
+                                    ).animate(
+                                      effects: [
+                                        FadeEffect(
+                                          duration: Duration(milliseconds: 500),
+                                          curve: Curves.easeInOut,
+                                        ),
+                                        SlideEffect(
+                                          begin: const Offset(0, 0.3),
+                                          end: Offset.zero,
+                                          curve: Curves.easeInOut,
+                                          duration: Duration(milliseconds: 500),
+                                        ),
+                                      ],
                                     ),
                                   ] else
                                     Center(
@@ -185,6 +261,18 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
                                               ),
                                         ),
                                       ),
+                                    ).animate(
+                                      effects: [
+                                        FadeEffect(
+                                          duration: Duration(milliseconds: 500),
+                                          curve: Curves.easeInOut,
+                                        ),
+                                        ScaleEffect(
+                                          end: Offset.zero,
+                                          curve: Curves.easeInOut,
+                                          duration: Duration(milliseconds: 500),
+                                        ),
+                                      ],
                                     ),
                                 ],
                               ),

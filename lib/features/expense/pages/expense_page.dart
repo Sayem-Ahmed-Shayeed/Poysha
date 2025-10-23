@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:poysha/features/expense/pages/expense_pages/edit_expense_page.dart';
 import 'package:poysha/features/expense/pages/income_pages/edit_income_page.dart';
@@ -45,27 +46,36 @@ class _ExpensePageState extends State<ExpensePage> {
         onTap: () {
           navigateWithAnimation(child: ExpenseGate(), ctx: context);
         },
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: theme.colorScheme.secondary,
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(2, 2),
-                blurRadius: 0,
-                color: theme.colorScheme.onSurface,
+        child:
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: theme.colorScheme.secondary,
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(2, 2),
+                    blurRadius: 0,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Text(
-            "Add Expense/Income",
-            style: theme.textTheme.titleSmall?.copyWith(
-              color: theme.colorScheme.onSecondary,
-              fontWeight: FontWeight.bold,
+              child: Text(
+                "Add Expense/Income",
+                style: theme.textTheme.titleSmall?.copyWith(
+                  color: theme.colorScheme.onSecondary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ).animate(
+              effects: [
+                ScaleEffect(
+                  duration: Duration(milliseconds: 500),
+                  curve: Curves.easeInOut,
+                  delay: Duration.zero,
+                ),
+              ],
             ),
-          ),
-        ),
       ),
       appBar: AppBar(
         centerTitle: true,
@@ -82,6 +92,14 @@ class _ExpensePageState extends State<ExpensePage> {
                 onPressed: () {
                   ref.read(themeNotifierProvider.notifier).toggleThemeMode();
                 },
+              ).animate(
+                effects: [
+                  ScaleEffect(
+                    duration: Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
+                    delay: Duration.zero,
+                  ),
+                ],
               );
             },
           ),
@@ -127,6 +145,14 @@ class _ExpensePageState extends State<ExpensePage> {
                           ],
                         ),
                       ),
+                    ).animate(
+                      effects: [
+                        FadeEffect(
+                          duration: Duration(milliseconds: 500),
+                          curve: Curves.easeInOut,
+                          delay: Duration.zero,
+                        ),
+                      ],
                     );
                   }
 
@@ -183,6 +209,21 @@ class _ExpensePageState extends State<ExpensePage> {
                               isIncome: isIncome,
                             ),
                           ),
+                        ).animate(
+                          effects: [
+                            FadeEffect(
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              delay: Duration(milliseconds: 100 * index),
+                            ),
+                            MoveEffect(
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeInOut,
+                              delay: Duration(milliseconds: 100 * index),
+                              begin: Offset(0, 20),
+                              end: Offset(0, 0),
+                            ),
+                          ],
                         );
                       },
                     ),

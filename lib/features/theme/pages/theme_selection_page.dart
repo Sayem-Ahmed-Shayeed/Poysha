@@ -1,5 +1,6 @@
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -23,26 +24,28 @@ class ThemeSelectionPage extends StatelessWidget {
       crossAxisCount = 5;
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        scrolledUnderElevation: 0,
-        centerTitle: true,
-        title: Text('Select Theme', style: TextStyle(fontSize: 20)),
-      ),
-      body: GridView.builder(
-        itemCount: colorSchemes.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: crossAxisCount,
-          crossAxisSpacing: 2.w,
-          mainAxisSpacing: 2.h,
-          childAspectRatio: 1,
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          scrolledUnderElevation: 0,
+          centerTitle: true,
+          title: Text('Select Theme', style: TextStyle(fontSize: 20)),
         ),
-        itemBuilder: (context, index) {
-          final theme = FlexColorScheme.light(
-            scheme: colorSchemes[index],
-          ).toTheme;
-          return _buildThemeCard(theme, colorSchemes[index]);
-        },
+        body: GridView.builder(
+          itemCount: colorSchemes.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            crossAxisSpacing: 2.w,
+            mainAxisSpacing: 2.h,
+            childAspectRatio: 1,
+          ),
+          itemBuilder: (context, index) {
+            final theme = FlexColorScheme.light(
+              scheme: colorSchemes[index],
+            ).toTheme;
+            return _buildThemeCard(theme, colorSchemes[index]);
+          },
+        ),
       ),
     );
   }
@@ -115,7 +118,7 @@ class ThemeSelectionPage extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
       ],
-    );
+    ).animate(effects: [FadeEffect(duration: 300.ms)]);
   }
 
   Widget _buildColorBox({required Color color, required double size}) {

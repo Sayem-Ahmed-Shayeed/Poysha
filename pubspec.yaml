@@ -43,6 +43,7 @@ dependencies:
   uuid:
   intl:
   fl_chart:
+  flutter_animate:
 
 dev_dependencies:
   flutter_test:
