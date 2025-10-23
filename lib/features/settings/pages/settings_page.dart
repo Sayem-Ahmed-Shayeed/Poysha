@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:poysha/features/settings/widgets/settinngs_card.dart';
 import 'package:poysha/features/theme/pages/theme_selection_page.dart';
@@ -13,7 +14,9 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
+      backgroundColor: theme.colorScheme.surfaceContainerLowest,
       appBar: AppBar(
+        backgroundColor: theme.colorScheme.surfaceContainerLowest,
         centerTitle: true,
         scrolledUnderElevation: 0,
         actions: [
@@ -42,11 +45,13 @@ class SettingsPage extends StatelessWidget {
                 title: "Themes",
                 icon: Icons.color_lens,
                 child: ThemeSelectionPage(),
-              ),
+              ).animate(effects: [FadeEffect(duration: 500.ms)]),
               SettingsCard(
                 title: "Clear All Data",
                 icon: Icons.clear_all,
                 child: ClearDataPage(),
+              ).animate(
+                effects: [FadeEffect(duration: 500.ms, delay: 100.ms)],
               ),
             ],
           ),

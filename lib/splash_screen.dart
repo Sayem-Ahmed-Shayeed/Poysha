@@ -21,7 +21,11 @@ class SplashScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(child: SizedBox()),
-            Image.asset('assets/images/splash.gif', width: 400.w).animate(
+            Image.asset(
+              fit: BoxFit.cover,
+              'assets/images/splash.gif',
+              width: 200.w,
+            ).animate(
               effects: [
                 FadeEffect(duration: 800.ms),
                 SlideEffect(
@@ -59,17 +63,19 @@ class SplashScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Sayem Ahmed Shayeed. All rights reserved.',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withOpacity(0.6),
-                  ),
-                ).animate().fadeIn(duration: 800.ms, delay: 1200.ms),
-                SizedBox(height: 20.h),
-              ],
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Sayem Ahmed Shayeed. All rights reserved.',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: Colors.white.withOpacity(0.6),
+                    ),
+                  ).animate().fadeIn(duration: 800.ms, delay: 1200.ms),
+                  SizedBox(height: 20.h),
+                ],
+              ),
             ),
           ],
         ),

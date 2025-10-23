@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Widget buildEmptyState(ThemeData theme) {
@@ -6,7 +7,7 @@ Widget buildEmptyState(ThemeData theme) {
     height: 300.h,
     padding: EdgeInsetsGeometry.all(20.w),
     decoration: BoxDecoration(
-      color: theme.colorScheme.surface,
+      color: theme.colorScheme.surfaceContainerLowest,
       borderRadius: BorderRadius.circular(4),
     ),
 
@@ -36,6 +37,6 @@ Widget buildEmptyState(ThemeData theme) {
           ),
         ],
       ),
-    ),
+    ).animate(effects: [FadeEffect(duration: 500.ms)]),
   );
 }

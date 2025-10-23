@@ -13,38 +13,42 @@ class ThemeSelectionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     List<FlexScheme> colorSchemes = FlexScheme.values;
 
-    int crossAxisCount = 4;
-    if (1.sw < 600) {
-      crossAxisCount = 4;
-    } else if (1.sw > 601 && 1.sw < 800) {
-      crossAxisCount = 4;
-    } else if (1.sw > 801 && 1.sw < 1200) {
-      crossAxisCount = 5;
-    } else {
-      crossAxisCount = 5;
+    int getCrossAxisCount() {
+      final width = MediaQuery.of(context).size.width;
+      if (width < 360) return 3;
+      if (width < 600) return 4;
+      if (width < 900) return 5;
+      return 6;
     }
 
+    int crossAxisCount = getCrossAxisCount();
+    final theme = Theme.of(context);
     return SafeArea(
       child: Scaffold(
+        backgroundColor: theme.colorScheme.surfaceContainerLowest,
         appBar: AppBar(
+          backgroundColor: theme.colorScheme.surfaceContainerLowest,
           scrolledUnderElevation: 0,
           centerTitle: true,
-          title: Text('Select Theme', style: TextStyle(fontSize: 20)),
+          title: Text('Select Theme'),
         ),
-        body: GridView.builder(
-          itemCount: colorSchemes.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            crossAxisSpacing: 2.w,
-            mainAxisSpacing: 2.h,
-            childAspectRatio: 1,
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+          child: GridView.builder(
+            itemCount: colorSchemes.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
+              crossAxisSpacing: 8.w,
+              mainAxisSpacing: 8.h,
+              childAspectRatio: 0.85,
+            ),
+            itemBuilder: (context, index) {
+              final theme = FlexColorScheme.light(
+                scheme: colorSchemes[index],
+              ).toTheme;
+              return _buildThemeCard(theme, colorSchemes[index]);
+            },
           ),
-          itemBuilder: (context, index) {
-            final theme = FlexColorScheme.light(
-              scheme: colorSchemes[index],
-            ).toTheme;
-            return _buildThemeCard(theme, colorSchemes[index]);
-          },
         ),
       ),
     );
@@ -53,70 +57,82 @@ class ThemeSelectionPage extends StatelessWidget {
   Widget _buildThemeCard(ThemeData theme, FlexScheme scheme) {
     return Column(
       children: [
-        Consumer(
-          builder: (context, ref, child) => GestureDetector(
-            onTap: () {
-              ref
-                  .read(colorSchemeProvider.notifier)
-                  .setColorScheme(scheme.name);
+        Expanded(
+          child: Consumer(
+            builder: (context, ref, child) => GestureDetector(
+              onTap: () {
+                ref
+                    .read(colorSchemeProvider.notifier)
+                    .setColorScheme(scheme.name);
 
-              Navigator.of(context).pop();
-            },
-            child: Container(
-              padding: EdgeInsets.all(10.w),
-              margin: EdgeInsets.all(1.w),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: theme.colorScheme.outline.withValues(alpha: 0.5),
-                  width: 0.5.w,
+                Navigator.of(context).pop();
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 2.w),
+                margin: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: theme.colorScheme.outline.withValues(alpha: 0.5),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(5.r),
                 ),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildColorBox(
-                        color: theme.colorScheme.primary,
-                        size: 35,
-                      ),
-                      SizedBox(width: 3.w),
-                      _buildColorBox(
-                        color: theme.colorScheme.secondary,
-                        size: 35,
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 1.h),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildColorBox(
-                        color: theme.colorScheme.primaryContainer,
-                        size: 35,
-                      ),
-                      SizedBox(width: 3.w),
-                      _buildColorBox(
-                        color: theme.colorScheme.tertiary,
-                        size: 35,
-                      ),
-                    ],
-                  ),
-                ],
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final boxSize = (constraints.maxWidth - 12.w) / 2.1;
+
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildColorBox(
+                              color: theme.colorScheme.primary,
+                              size: boxSize,
+                            ),
+                            SizedBox(width: 2.w),
+                            _buildColorBox(
+                              color: theme.colorScheme.secondary,
+                              size: boxSize,
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 1.5.h),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _buildColorBox(
+                              color: theme.colorScheme.primaryContainer,
+                              size: boxSize,
+                            ),
+                            SizedBox(width: 2.w),
+                            _buildColorBox(
+                              color: theme.colorScheme.tertiary,
+                              size: boxSize,
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ),
           ),
         ),
-        Text(
-          scheme.name.capitalize,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 2.w),
+          child: Text(
+            scheme.name.capitalize,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
+        SizedBox(height: 1.h),
       ],
     ).animate(effects: [FadeEffect(duration: 300.ms)]);
   }
@@ -127,7 +143,7 @@ class ThemeSelectionPage extends StatelessWidget {
       width: size,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(6.r),
+        borderRadius: BorderRadius.circular(2.r),
       ),
     );
   }

@@ -100,8 +100,10 @@ class _EditIncomePageState extends State<EditIncomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Scaffold(
+      backgroundColor: theme.colorScheme.surfaceContainerLowest,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        backgroundColor: theme.colorScheme.surfaceContainerLowest,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,

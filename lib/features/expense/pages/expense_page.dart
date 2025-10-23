@@ -42,6 +42,7 @@ class _ExpensePageState extends State<ExpensePage> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: theme.colorScheme.surfaceContainerLowest,
       floatingActionButton: GestureDetector(
         onTap: () {
           navigateWithAnimation(child: ExpenseGate(), ctx: context);
@@ -78,6 +79,7 @@ class _ExpensePageState extends State<ExpensePage> {
             ),
       ),
       appBar: AppBar(
+        backgroundColor: theme.colorScheme.surfaceContainerLowest,
         centerTitle: true,
         scrolledUnderElevation: 0,
         actions: [

@@ -20,7 +20,6 @@ Future<void> main() async {
   await Hive.openBox<String>('colorSchemeBox');
   await Hive.openBox<bool>('themeModeBox');
   await Hive.openBox('expenseBox');
-
   runApp(const ProviderScope(child: MyApp()));
 }
 

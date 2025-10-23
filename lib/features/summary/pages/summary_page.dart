@@ -53,6 +53,7 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
 
     return SafeArea(
       child: Scaffold(
+        backgroundColor: theme.colorScheme.surfaceContainerLowest,
         appBar: AppBar(
           actions: [
             Consumer(
@@ -80,6 +81,7 @@ class _SummaryPageState extends ConsumerState<SummaryPage> {
           ],
           scrolledUnderElevation: 0,
           centerTitle: true,
+          backgroundColor: theme.colorScheme.surfaceContainerLowest,
           title: const Text("Summary"),
         ),
         body: summaryState.isLoading

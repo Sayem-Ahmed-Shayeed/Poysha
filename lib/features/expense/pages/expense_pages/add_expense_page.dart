@@ -87,10 +87,10 @@ class _AddExpensePageState extends State<AddExpensePage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        backgroundColor: theme.colorScheme.surfaceContainerLowest,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
@@ -261,6 +261,7 @@ class _AddExpensePageState extends State<AddExpensePage>
                       ],
                     ),
                   ),
+                  SizedBox(height: 50),
                 ],
               ),
             ),

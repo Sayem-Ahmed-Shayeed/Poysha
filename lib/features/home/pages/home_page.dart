@@ -22,6 +22,7 @@ class HomePage extends StatelessWidget {
       length: tabs.length,
       child: SafeArea(
         child: Scaffold(
+          backgroundColor: theme.colorScheme.surfaceContainerLowest,
           body: TabBarView(physics: ScrollPhysics(), children: [...tabViews]),
           bottomNavigationBar: TabBar(
             labelColor: theme.colorScheme.primary,

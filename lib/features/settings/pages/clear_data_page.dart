@@ -14,7 +14,9 @@ class ClearDataPage extends StatelessWidget {
     final theme = Theme.of(context);
     return SafeArea(
       child: Scaffold(
+        backgroundColor: theme.colorScheme.surfaceContainerLowest,
         appBar: AppBar(
+          backgroundColor: theme.colorScheme.surfaceContainerLowest,
           scrolledUnderElevation: 0,
           title: Text(
             "Clear Data",
@@ -23,115 +25,91 @@ class ClearDataPage extends StatelessWidget {
             ),
           ),
           centerTitle: true,
-          backgroundColor: theme.colorScheme.surface,
         ),
         body: Center(
-          child: Container(
-            margin: EdgeInsets.all(20),
-            height: 100.h,
-            padding: EdgeInsets.symmetric(horizontal: 40.w, vertical: 2.h),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primaryContainer,
-              boxShadow: [
-                BoxShadow(
-                  color: theme.colorScheme.onSurface,
-                  offset: const Offset(2, 2),
-                  blurRadius: 0,
-                ),
-              ],
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  textAlign: TextAlign.center,
-                  "Do you want to delete \nall the history?",
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 40.sp,
-                    color: theme.colorScheme.onPrimaryContainer,
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 40.w,
-                          vertical: 2.h,
-                        ),
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black,
-                              offset: const Offset(2, 2),
-                              blurRadius: 0,
-                            ),
-                          ],
-                          color: Colors.green,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          "No",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 40.sp,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                textAlign: TextAlign.center,
+                "Do you want to delete \nall the history?",
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black,
+                            offset: const Offset(2, 2),
+                            blurRadius: 0,
                           ),
+                        ],
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        "No",
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
                         ),
                       ),
                     ),
-                    SizedBox(width: 50.w),
-                    Consumer(
-                      builder: (context, ref, child) {
-                        return GestureDetector(
-                          onTap: () async {
-                            ref.read(expenseProvider.notifier).clearExpenses();
-                            if (context.mounted) {
-                              customSnackBar(
-                                context: context,
-                                message: 'Data Cleared',
-                              );
-                              Navigator.of(context).pop();
-                            }
-                          },
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 40.w,
-                              vertical: 2.h,
-                            ),
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black,
-                                  offset: const Offset(2, 2),
-                                  blurRadius: 0,
-                                ),
-                              ],
-                              color: Colors.red,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              "Yes",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 40.sp,
+                  ),
+                  SizedBox(width: 20),
+                  Consumer(
+                    builder: (context, ref, child) {
+                      return GestureDetector(
+                        onTap: () async {
+                          ref.read(expenseProvider.notifier).clearExpenses();
+                          if (context.mounted) {
+                            customSnackBar(
+                              context: context,
+                              message: 'Data Cleared',
+                            );
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black,
+                                offset: const Offset(2, 2),
+                                blurRadius: 0,
                               ),
+                            ],
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            "Yes",
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: Colors.white,
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
           ),
         ).animate(effects: [FadeEffect(duration: 500.ms)]),
       ),

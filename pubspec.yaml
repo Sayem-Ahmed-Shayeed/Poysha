@@ -45,6 +45,8 @@ dependencies:
   fl_chart:
   flutter_animate:
   animated_splash_screen:
+  device_preview:
+
 
 dev_dependencies:
   flutter_test:
