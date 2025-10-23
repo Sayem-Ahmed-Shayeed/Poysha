@@ -68,6 +68,7 @@ class _ExpensePageState extends State<ExpensePage> {
         ),
       ),
       appBar: AppBar(
+        centerTitle: true,
         scrolledUnderElevation: 0,
         actions: [
           Consumer(
