@@ -40,3 +40,4 @@ final expenseProvider =
     StateNotifierProvider<ExpenseProviderNotifier, List<Expense>>(
       (ref) => ExpenseProviderNotifier(),
     );
+//list of expense it will return where each expense has a dateTime so we can just find the monthly and the yearly query usig the dateTIme

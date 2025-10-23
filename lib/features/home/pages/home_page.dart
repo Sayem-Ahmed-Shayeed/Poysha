@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:poysha/features/settings/settings_page.dart';
+import 'package:poysha/features/settings/pages/settings_page.dart';
 
 import '../../expense/pages/expense_page.dart';
 import '../../summary/pages/summary_page.dart';

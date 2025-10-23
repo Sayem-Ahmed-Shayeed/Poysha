@@ -1,145 +1,257 @@
+// 4. Update the SummaryPage: lib/features/summary/pages/summary_page.dart
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:poysha/features/expense/providers/expense_provider.dart';
-import 'package:poysha/features/summary/helpers/calculate_monthly_summary.dart';
-import 'package:poysha/features/summary/helpers/calculate_summary.dart';
+import 'package:poysha/features/summary/providers/summary_provider.dart';
+import 'package:poysha/features/summary/widgets/category_breakdown_widget.dart';
 import 'package:poysha/features/summary/widgets/summary_card.dart';
 import 'package:poysha/features/summary/widgets/title_text.dart';
 
-import '../const/month_names.dart';
+import '../widgets/empty_state.dart';
 
-class SummaryPage extends StatefulWidget {
+class SummaryPage extends ConsumerStatefulWidget {
   const SummaryPage({super.key});
 
   @override
-  State<SummaryPage> createState() => _SummaryPageState();
+  ConsumerState<SummaryPage> createState() => _SummaryPageState();
 }
 
-class _SummaryPageState extends State<SummaryPage> {
-  final TextEditingController _dateController = TextEditingController();
-
-  String selectedMonth = months[DateTime.now().month];
-
-  //DateTime _pickedDate = DateTime.now();
-  // bool isSelectingDate = false;
-  //
-  // void toggleIsSelectingDate() {
-  //   setState(() {
-  //     isSelectingDate = !isSelectingDate;
-  //   });
-  // }
-  //
-  // void onConfirmDate(DateTime date) {
-  //   setState(() {
-  //     _pickedDate = date;
-  //   });
-  //   toggleIsSelectingDate();
-  // }
+class _SummaryPageState extends ConsumerState<SummaryPage> {
+  String selectedTimeFrame = 'Daily';
+  bool ascending = false;
+  List<String> timeFrames = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All'];
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadSummary();
+    });
+  }
+
+  void _loadSummary() {
+    final expenses = ref.read(expenseProvider);
+    ref
+        .read(summaryProvider.notifier)
+        .calculateSummary(
+          expenses: expenses,
+          timeFrame: selectedTimeFrame,
+          ascending: ascending,
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final summaryState = ref.watch(summaryProvider);
+    final _ = ref.watch(expenseProvider);
+
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(centerTitle: true, title: Text("Summary")),
-        body: Consumer(
-          builder: (context, ref, child) {
-            final expenses = ref.watch(expenseProvider);
-            List<double> summary = calculateSummary(expenses);
-            final totalIncome = summary[0];
-            final totalExpense = summary[1];
-
-            final remaining = totalIncome - totalExpense;
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Stack(
-                children: [
-                  Column(
+        appBar: AppBar(
+          scrolledUnderElevation: 0,
+          centerTitle: true,
+          title: const Text("Summary"),
+        ),
+        body: summaryState.isLoading
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CupertinoActivityIndicator(radius: 20),
+                    SizedBox(height: 10.h),
+                    Text(
+                      'Calculating $selectedTimeFrame Summary...',
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              )
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TitleText(title: "Summary"),
-                      SizedBox(height: 5.h),
-                      SummaryCard(
-                        totalIncome: totalIncome,
-                        totalExpense: totalExpense,
-                        remaining: remaining,
-                      ),
-                      SizedBox(height: 20),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          TitleText(title: "Monthly Summary"),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 4,
-                              horizontal: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.primaryContainer,
-                              borderRadius: BorderRadius.circular(4),
-                              border: Border.all(
-                                color: theme.colorScheme.onSurface,
-                                width: 0.5,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: theme.colorScheme.onSurface,
-                                  offset: const Offset(2, 2),
-                                  blurRadius: 0,
-                                ),
-                              ],
-                            ),
-                            child: DropdownButton(
-                              underline: SizedBox(),
-                              padding: EdgeInsets.zero,
-                              value: selectedMonth,
-                              isDense: true,
-                              items: [
-                                for (var month in months)
-                                  DropdownMenuItem(
-                                    value: month,
-                                    child: Text(month),
-                                  ),
-                              ],
-                              onChanged: (value) => setState(() {
-                                selectedMonth = value!;
-                              }),
-                            ),
-                          ),
+                          _buildTimeFrameWidget(theme: theme),
+                          SizedBox(width: 15.w),
+                          _buildSortedWidget(theme: theme),
                         ],
                       ),
-                      SizedBox(height: 5.h),
-                      Consumer(
-                        builder: (context, ref, child) {
-                          final monthlySummary = calculateMonthlySummary(
-                            expenses,
-                            months.indexOf(selectedMonth),
-                          );
-                          final monthlyIncome = monthlySummary[0];
-                          final monthlyExpense = monthlySummary[1];
-                          final monthlyRemaining =
-                              monthlyIncome - monthlyExpense;
-                          return SummaryCard(
-                            totalIncome: monthlyIncome,
-                            totalExpense: monthlyExpense,
-                            remaining: monthlyRemaining,
-                          );
-                        },
-                      ),
+                      SizedBox(height: 10.h),
+
+                      if (summaryState.groupedExpenses.isEmpty)
+                        buildEmptyState(theme)
+                      else
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: summaryState.groupedExpenses.length,
+                          itemBuilder: (context, index) {
+                            final entries = summaryState.groupedExpenses.entries
+                                .toList();
+                            final key = entries[index].key;
+                            // final expenseList = entries[index].value;
+                            final categoryBreakdown =
+                                summaryState.categoryBreakdown[key] ?? {};
+
+                            final totalIncome =
+                                summaryState.totals['${key}_income'] ?? 0;
+                            final totalExpense =
+                                summaryState.totals['${key}_expense'] ?? 0;
+                            final remaining =
+                                summaryState.totals['${key}_remaining'] ?? 0;
+
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 20.h),
+                              padding: EdgeInsets.all(25.w),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.surface,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: theme.colorScheme.onSurface,
+                                    offset: const Offset(0.1, 2),
+                                    blurRadius: 0,
+                                  ),
+                                ],
+                                border: Border.all(
+                                  color: theme.colorScheme.onSurface
+                                      .withOpacity(0.1),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TitleText(title: key),
+                                  SizedBox(height: 5.h),
+
+                                  SummaryCard(
+                                    totalIncome: totalIncome,
+                                    totalExpense: totalExpense,
+                                    remaining: remaining,
+                                  ),
+                                  SizedBox(height: 10.h),
+                                  if (categoryBreakdown.isNotEmpty) ...[
+                                    TitleText(title: "Category Breakdown"),
+
+                                    Divider(
+                                      color: theme.colorScheme.onSurface
+                                          .withOpacity(0.8),
+                                      thickness: 0.5,
+                                      indent: 0.w,
+                                      endIndent: 280.w,
+                                    ),
+                                    CategoryBreakdownWidget(
+                                      categoryPercentages: categoryBreakdown,
+                                    ),
+                                  ] else
+                                    Center(
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 10.h,
+                                        ),
+                                        child: Text(
+                                          'No expenses in this period',
+                                          style: theme.textTheme.bodyMedium
+                                              ?.copyWith(
+                                                color: theme
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withOpacity(0.6),
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+
+                      SizedBox(height: 20.h),
                     ],
                   ),
-                ],
+                ),
               ),
-            );
-          },
-        ),
+      ),
+    );
+  }
+
+  Widget _buildTimeFrameWidget({required ThemeData theme}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: theme.colorScheme.onSurface, width: 0.5),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.onSurface,
+            offset: const Offset(2, 2),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: DropdownButton<String>(
+        elevation: 0,
+        borderRadius: BorderRadius.circular(4),
+        underline: const SizedBox(),
+        padding: EdgeInsets.zero,
+        value: selectedTimeFrame,
+        isDense: true,
+        items: [
+          for (var timeFrame in timeFrames)
+            DropdownMenuItem(value: timeFrame, child: Text(timeFrame)),
+        ],
+        onChanged: (value) {
+          setState(() {
+            selectedTimeFrame = value!;
+          });
+          _loadSummary();
+        },
+      ),
+    );
+  }
+
+  Widget _buildSortedWidget({required ThemeData theme}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: theme.colorScheme.onSurface, width: 0.5),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.onSurface,
+            offset: const Offset(2, 2),
+            blurRadius: 0,
+          ),
+        ],
+      ),
+      child: DropdownButton<bool>(
+        elevation: 0,
+        isDense: true,
+        borderRadius: BorderRadius.circular(4),
+        underline: const SizedBox(),
+        padding: EdgeInsets.zero,
+        value: ascending,
+        items: const [
+          DropdownMenuItem(value: true, child: Text("Ascending")),
+          DropdownMenuItem(value: false, child: Text("Descending")),
+        ],
+        onChanged: (value) {
+          setState(() {
+            ascending = value!;
+          });
+          _loadSummary();
+        },
       ),
     );
   }

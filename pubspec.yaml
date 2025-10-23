@@ -42,6 +42,7 @@ dependencies:
   path_provider:
   uuid:
   intl:
+  fl_chart:
 
 dev_dependencies:
   flutter_test:

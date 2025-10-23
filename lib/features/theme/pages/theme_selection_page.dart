@@ -111,7 +111,6 @@ class ThemeSelectionPage extends StatelessWidget {
         ),
         Text(
           scheme.name.capitalize,
-          style: TextStyle(fontSize: 30.sp),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),

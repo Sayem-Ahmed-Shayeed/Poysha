@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:poysha/features/expense/providers/is_date_selecting_provider.dart';
+import 'package:poysha/features/expense/providers/selected_date_provider.dart';
 
 class RetroDatePickerDialog extends StatefulWidget {
-  final TextEditingController controller;
-  final VoidCallback onClosing;
-  DateTime pickedDate = DateTime.now();
-
-  RetroDatePickerDialog({
-    super.key,
-    required this.controller,
-    required this.onClosing,
-    required this.pickedDate,
-  });
+  const RetroDatePickerDialog({super.key});
 
   @override
   State<RetroDatePickerDialog> createState() => _RetroDatePickerDialogState();
@@ -42,11 +36,17 @@ class _RetroDatePickerDialogState extends State<RetroDatePickerDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _RetroButton(
-                  text: 'X',
-                  color: Colors.red,
-                  onPressed: () {
-                    widget.onClosing();
+                Consumer(
+                  builder: (context, ref, child) {
+                    return _RetroButton(
+                      text: 'X',
+                      color: Colors.red,
+                      onPressed: () {
+                        ref
+                            .read(isDateSelectingProvider.notifier)
+                            .toggleIsDateSelecting();
+                      },
+                    );
                   },
                 ),
               ],
@@ -71,23 +71,33 @@ class _RetroDatePickerDialogState extends State<RetroDatePickerDialog> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                _RetroButton(
-                  text: 'Cancel',
-                  color: Colors.grey,
-                  onPressed: () {
-                    widget.onClosing();
+                Consumer(
+                  builder: (context, ref, child) {
+                    return _RetroButton(
+                      text: 'Cancel',
+                      color: Colors.grey,
+                      onPressed: () {
+                        ref
+                            .read(isDateSelectingProvider.notifier)
+                            .toggleIsDateSelecting();
+                      },
+                    );
                   },
                 ),
                 const SizedBox(width: 10),
-                _RetroButton(
-                  text: 'Confirm',
-                  color: Colors.yellow,
-                  onPressed: () {
-                    widget.controller.text =
-                        "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}";
-                    widget.pickedDate = selectedDate;
-                    widget.onClosing();
-                  },
+                Consumer(
+                  builder: (context, ref, child) => _RetroButton(
+                    text: 'Confirm',
+                    color: Colors.yellow,
+                    onPressed: () {
+                      ref
+                          .read(selectedDateProvider.notifier)
+                          .setDate(selectedDate);
+                      ref
+                          .read(isDateSelectingProvider.notifier)
+                          .toggleIsDateSelecting();
+                    },
+                  ),
                 ),
               ],
             ),
